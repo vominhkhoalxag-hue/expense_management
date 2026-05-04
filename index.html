@@ -294,7 +294,13 @@ function fmt(n) {
   return n+'đ';
 }
 
-function todayStr() { return new Date().toISOString().slice(0,10); }
+function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -434,7 +440,9 @@ function clearAllData() {
 function setFilter(cat) { filterCat = cat; render(); }
 
 function render() {
-  const today = todayStr(), monthStr = new Date().toISOString().slice(0,7);
+  const d = new Date();
+  const today = todayStr();
+  const monthStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
   const todayEntries = entries.filter(e=>e.date===today);
   const monthEntries = entries.filter(e=>e.date.startsWith(monthStr));
   const todaySum = todayEntries.reduce((s,e)=>s+e.amount,0);
