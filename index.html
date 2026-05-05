@@ -89,8 +89,6 @@
     .bar-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); }
 
     /* Filter */
-    .filter-wrap { margin-bottom: 1rem; animation: fadeUp 0.5s 0.3s ease both; }
-    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
     .filter-btn { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--paper); color: var(--muted); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
     .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
     .filter-count { font-size: 10px; opacity: 0.6; }
@@ -112,6 +110,33 @@
     .export-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
     .export-btn.copied { background: var(--accent2); color: white; border-color: transparent; }
 
+
+    /* Calendar */
+    .cal-section { background: white; border-radius: 14px; border: 1px solid var(--line); padding: 14px 12px; margin-bottom: 1rem; animation: fadeUp 0.5s 0.28s ease both; }
+    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .cal-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .cal-nav { display: flex; align-items: center; gap: 6px; }
+    .cal-arrow { background: none; border: 1px solid var(--line); border-radius: 6px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .cal-arrow:hover { background: var(--cream); }
+    .cal-arrow:disabled { opacity: 0.3; cursor: default; }
+    .cal-month-label { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--ink); min-width: 72px; text-align: center; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; width: 100%; }
+    .cal-dow { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; padding: 2px 0 6px; letter-spacing: 0.05em; }
+    .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; gap: 1px; min-width: 0; overflow: hidden; }
+    .cal-day:hover { background: var(--cream); }
+    .cal-day.empty { cursor: default; pointer-events: none; }
+    .cal-day.today { background: var(--cream); font-weight: 700; }
+    .cal-day.selected { background: var(--ink); color: white; }
+    .cal-day.selected .cal-dot { background: white; }
+    .cal-day.has-data .cal-dot { display: block; }
+    .cal-dot { display: none; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+    .bar-col { cursor: pointer; }
+    .bar-col:hover .bar { opacity: 0.75; }
+    .bar.selected { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .bar-label.sel { color: var(--ink); font-weight: 700; }
+    .cal-divider { height: 1px; background: var(--line); margin: 12px -12px 0; }
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
     /* Danger zone */
     .danger-zone { margin-bottom: 1.25rem; animation: fadeUp 0.5s 0.34s ease both; }
     .clear-btn { width: 100%; padding: 12px; background: transparent; color: var(--muted); border: 1.5px dashed var(--line); border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
@@ -121,11 +146,12 @@
     .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,26,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; animation: fadeIn 0.2s ease; }
     .modal-overlay.hidden { display: none; }
     .modal { background: var(--paper); border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 480px; animation: slideUp 0.25s ease; }
+    .modal { font-family: -apple-system, 'Segoe UI', sans-serif; }
     .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
     .modal-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
     .modal-btns { display: flex; gap: 10px; }
-    .modal-cancel { flex: 1; padding: 12px; background: var(--cream); color: var(--ink); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
-    .modal-confirm { flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .modal-cancel { flex: 1; padding: 12px; background: var(--cream); color: var(--ink); border: none; border-radius: 10px; font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .modal-confirm { flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -162,14 +188,14 @@
 <div class="app">
   <div class="header">
     <div class="header-top">
-      <div class="title">Chi tiêu<br><span>hôm nay</span></div>
+      <div class="title">Chi tiêu<br><span id="titleDate">hôm nay</span></div>
       <span class="month-badge" id="monthBadge"></span>
     </div>
   </div>
 
   <div class="summary">
     <div class="sum-card accent">
-      <div class="sum-label">Hôm nay</div>
+      <div class="sum-label" id="dayLabel">Hôm nay</div>
       <div class="sum-value" id="todayTotal">0đ</div>
     </div>
     <div class="sum-card">
@@ -211,8 +237,18 @@
     <div class="chart-bars" id="chartBars"></div>
   </div>
 
-  <div class="filter-wrap">
-    <div class="section-title">Lọc theo danh mục</div>
+  <div class="cal-section">
+    <div class="cal-header">
+      <span class="cal-title">Chọn ngày xem</span>
+      <div class="cal-nav">
+        <button class="cal-arrow" onclick="shiftCalMonth(-1)">&#8249;</button>
+        <span class="cal-month-label" id="calMonthLabel"></span>
+        <button class="cal-arrow" onclick="shiftCalMonth(1)" id="calNextBtn">&#8250;</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-divider"></div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Lọc theo danh mục</div>
     <div class="filter-row" id="filterRow"></div>
   </div>
 
@@ -220,9 +256,9 @@
     <div class="export-header">
       <div class="section-title" style="margin:0">Xuất báo cáo</div>
       <div class="month-picker">
-        <button class="mpick-arrow" onclick="shiftMonth(-1)">‹</button>
+        <button class="mpick-arrow" onclick="shiftExportMonth(-1)">‹</button>
         <span class="mpick-label" id="mpickLabel"></span>
-        <button class="mpick-arrow" onclick="shiftMonth(1)" id="mpickNext">›</button>
+        <button class="mpick-arrow" onclick="shiftExportMonth(1)" id="mpickNext">›</button>
       </div>
     </div>
     <button class="export-btn" id="exportBtn" onclick="exportReport()" style="margin-bottom:0">📋 Sao chép báo cáo</button>
@@ -261,9 +297,19 @@ const CATS = [
   { label: 'Khác',      icon: '📦', color: '#f5f0e8' },
 ];
 
+function todayStr() {
+  const n = new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+}
+function nowMonthStr() {
+  const n = new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0');
+}
+
 let entries = [], selectedCat = 'Ăn uống', filterCat = 'Tất cả', budget = 0, budgetFormOpen = false;
-const _n = new Date();
-let selectedMonth = _n.getFullYear() + '-' + String(_n.getMonth()+1).padStart(2,'0');
+let selectedDate = todayStr();
+let calMonth = nowMonthStr();
+let selectedMonth = nowMonthStr();
 try { entries = JSON.parse(localStorage.getItem('chitieu_entries') || '[]'); } catch(e) {}
 try { budget = parseInt(localStorage.getItem('chitieu_budget') || '0'); } catch(e) {}
 
@@ -348,23 +394,54 @@ function addEntry() {
 
 function deleteEntry(id) { entries = entries.filter(e=>e.id!==id); save(); render(); }
 
-function shiftMonth(dir) {
-  let [y, m] = selectedMonth.split('-').map(Number);
-  m += dir;
-  if (m > 12) { m = 1; y++; }
-  if (m < 1)  { m = 12; y--; }
-  selectedMonth = y + '-' + String(m).padStart(2,'0');
+// Calendar month nav
+function shiftCalMonth(dir) {
+  let [y,m] = calMonth.split('-').map(Number);
+  m += dir; if(m>12){m=1;y++;} if(m<1){m=12;y--;}
+  calMonth = y+'-'+String(m).padStart(2,'0');
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const [cy,cm] = calMonth.split('-').map(Number);
+  const label = new Date(cy,cm-1,1).toLocaleDateString('vi-VN',{month:'short',year:'numeric'});
+  document.getElementById('calMonthLabel').textContent = label;
+  const nextBtn = document.getElementById('calNextBtn');
+  nextBtn.disabled = calMonth >= nowMonthStr();
+  nextBtn.style.opacity = nextBtn.disabled ? '0.3' : '1';
+  const daysInMonth = new Date(cy,cm,0).getDate();
+  const firstDow = new Date(cy,cm-1,1).getDay();
+  const offset = (firstDow+6)%7;
+  const datesWithData = new Set(entries.map(e=>e.date));
+  const DOWS = ['T2','T3','T4','T5','T6','T7','CN'];
+  let html = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<offset;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=cy+'-'+String(cm).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const isToday=ds===todayStr(), isSel=ds===selectedDate, hasData=datesWithData.has(ds);
+    let cls='cal-day';
+    if(isToday) cls+=' today'; if(isSel) cls+=' selected'; if(hasData) cls+=' has-data';
+    html+=`<div class="${cls}" onclick="selectDay('${ds}')"><span>${d}</span><div class="cal-dot"></div></div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+function selectDay(ds) {
+  selectedDate = ds; filterCat = 'Tất cả';
+  renderCalendar(); renderEntries();
+}
+
+// Export month nav
+function shiftExportMonth(dir) {
+  let [y,m] = selectedMonth.split('-').map(Number);
+  m += dir; if(m>12){m=1;y++;} if(m<1){m=12;y--;}
+  selectedMonth = y+'-'+String(m).padStart(2,'0');
   renderMonthPicker();
 }
 
-function nowMonthStr() {
-  const n = new Date();
-  return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0');
-}
-
 function renderMonthPicker() {
-  const [y, m] = selectedMonth.split('-').map(Number);
-  const label = new Date(y, m-1, 1).toLocaleDateString('vi-VN',{month:'short',year:'numeric'});
+  const [y,m] = selectedMonth.split('-').map(Number);
+  const label = new Date(y,m-1,1).toLocaleDateString('vi-VN',{month:'short',year:'numeric'});
   document.getElementById('mpickLabel').textContent = label;
   const nextBtn = document.getElementById('mpickNext');
   nextBtn.disabled = selectedMonth >= nowMonthStr();
@@ -437,7 +514,12 @@ function clearAllData() {
   render();
 }
 
-function setFilter(cat) { filterCat = cat; render(); }
+function selectDayFromChart(ds) {
+  selectedDate = ds; calMonth = ds.slice(0,7); filterCat = 'Tất cả';
+  render();
+}
+
+function setFilter(cat) { filterCat = cat; renderEntries(); }
 
 function render() {
   const d = new Date();
@@ -448,7 +530,6 @@ function render() {
   const todaySum = todayEntries.reduce((s,e)=>s+e.amount,0);
   const monthSum = monthEntries.reduce((s,e)=>s+e.amount,0);
 
-  document.getElementById('todayTotal').textContent = fmt(todaySum);
   document.getElementById('monthTotal').textContent = fmt(monthSum);
   document.getElementById('monthBadge').textContent = new Date().toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric',year:'numeric'});
 
@@ -474,21 +555,39 @@ function render() {
   for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);days.push({ds,sum:entries.filter(e=>e.date===ds).reduce((s,e)=>s+e.amount,0),label:d.toLocaleDateString('vi-VN',{weekday:'narrow'})});}
   const max=Math.max(...days.map(d=>d.sum),1);
   document.getElementById('chartBars').innerHTML=days.map(d=>
-    `<div class="bar-col"><div class="bar${d.sum>0?' has-data':''}${d.ds===today?' today':''}" style="height:${Math.round((d.sum/max)*60)+4}px" title="${fmt(d.sum)}"></div><span class="bar-label">${d.label}</span></div>`
+    `<div class="bar-col" onclick="selectDayFromChart('${d.ds}')">
+      <div class="bar${d.sum>0?' has-data':''}${d.ds===today?' today':''}${d.ds===selectedDate?' selected':''}" style="height:${Math.round((d.sum/max)*60)+4}px" title="${fmt(d.sum)}"></div>
+      <span class="bar-label${d.ds===selectedDate?' sel':''}">${d.label}</span>
+    </div>`
   ).join('');
 
-  const filterBtns=[{label:'Tất cả',icon:'📋',count:todayEntries.length}];
-  CATS.forEach(c=>{const cnt=todayEntries.filter(e=>e.cat===c.label).length;if(cnt>0)filterBtns.push({label:c.label,icon:c.icon,count:cnt});});
+  renderCalendar();
+  renderEntries();
+}
+
+function renderEntries() {
+  const selEntries = entries.filter(e=>e.date===selectedDate);
+  const isToday = selectedDate===todayStr();
+  const daySum = selEntries.reduce((s,e)=>s+e.amount,0);
+
+  // Update day card
+  const dateObj = new Date(selectedDate+'T00:00:00');
+  document.getElementById('dayLabel').textContent = isToday ? 'Hôm nay' : dateObj.toLocaleDateString('vi-VN',{day:'numeric',month:'numeric'});
+  document.getElementById('todayTotal').textContent = fmt(daySum);
+
+  const filterBtns=[{label:'Tất cả',icon:'📋',count:selEntries.length}];
+  CATS.forEach(c=>{const cnt=selEntries.filter(e=>e.cat===c.label).length;if(cnt>0)filterBtns.push({label:c.label,icon:c.icon,count:cnt});});
   document.getElementById('filterRow').innerHTML=filterBtns.map(f=>
     `<button class="filter-btn${f.label===filterCat?' active':''}" onclick="setFilter('${f.label}')">${f.icon} ${f.label} <span class="filter-count">${f.count}</span></button>`
   ).join('');
 
-  let filtered = filterCat==='Tất cả' ? todayEntries : todayEntries.filter(e=>e.cat===filterCat);
+  let filtered = filterCat==='Tất cả' ? selEntries : selEntries.filter(e=>e.cat===filterCat);
+  const dateLabel = isToday ? 'Hôm nay' : dateObj.toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric'});
   if(filterCat!=='Tất cả'){const co=CATS.find(c=>c.label===filterCat);document.getElementById('entriesTitle').textContent=`${co?.icon||''} ${filterCat} — ${fmt(filtered.reduce((s,e)=>s+e.amount,0))}`;}
-  else document.getElementById('entriesTitle').textContent='Hôm nay';
+  else document.getElementById('entriesTitle').textContent = daySum>0 ? `${dateLabel} — ${fmt(daySum)}` : dateLabel;
 
   const list=document.getElementById('entryList');
-  if(!filtered.length){list.innerHTML=`<div class="empty"><div class="empty-icon">${filterCat==='Tất cả'?'📒':'🔍'}</div>${filterCat==='Tất cả'?'Chưa có khoản chi nào hôm nay':'Không có khoản chi nào trong danh mục này'}</div>`;return;}
+  if(!filtered.length){list.innerHTML=`<div class="empty"><div class="empty-icon">${filterCat==='Tất cả'?'📒':'🔍'}</div>${filterCat==='Tất cả'?'Không có khoản chi nào ngày này':'Không có khoản chi nào trong danh mục này'}</div>`;return;}
   list.innerHTML=filtered.map(e=>
     `<div class="entry"><div class="entry-icon" style="background:${e.color}">${e.icon}</div><div class="entry-info"><div class="entry-name">${e.name}</div><div class="entry-meta">${e.cat} · ${e.time}</div></div><div class="entry-amount">−${fmt(e.amount)}</div><button class="entry-del" onclick="deleteEntry(${e.id})" title="Xoá">×</button></div>`
   ).join('');
