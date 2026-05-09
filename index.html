@@ -94,11 +94,6 @@
     .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
     .filter-count { font-size: 10px; opacity: 0.6; }
 
-    /* Export */
-    .export-btn { width: 100%; padding: 12px; background: var(--cream); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1.25rem; animation: fadeUp 0.5s 0.32s ease both; }
-    .export-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-    .export-btn.copied { background: var(--accent2); color: white; border-color: transparent; }
-
     /* Export section */
     .export-section { background: white; border-radius: 14px; border: 1px solid var(--line); padding: 14px 16px; margin-bottom: 1rem; animation: fadeUp 0.5s 0.33s ease both; display: flex; flex-direction: column; gap: 12px; }
     .export-header { display: flex; justify-content: space-between; align-items: center; }
@@ -189,7 +184,7 @@
 <div class="app">
   <div class="header">
     <div class="header-top">
-      <div class="title">Chi tiêu<br><span id="titleDate">hôm nay</span></div>
+      <div class="title">Chi tiêu<br><span id="titleDate">10h30 sáng 8/5</span></div>
       <span class="month-badge" id="monthBadge"></span>
     </div>
   </div>
@@ -298,10 +293,6 @@ const CATS = [
   { label: 'Khác',      icon: '📦', color: '#f5f0e8' },
 ];
 
-function todayStr() {
-  const n = new Date();
-  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
-}
 function nowMonthStr() {
   const n = new Date();
   return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0');
@@ -321,24 +312,63 @@ function parseAmount(raw) {
 
   raw = raw.toLowerCase().replace(/\s+/g, '');
 
-  // đổi đơn vị
-  raw = raw.replace(/(\d+(?:\.\d+)?)(k)/g, (_, n) => Number(n) * 1000);
-  raw = raw.replace(/(\d+(?:\.\d+)?)(tr|triệu|trieu|m)/g, (_, n) => Number(n) * 1000000);
+  // hỗ trợ kiểu "1tr699" = 1 triệu 699 nghìn, "2tr5" = 2 triệu 5 trăm nghìn, "1tr2" = 1.2 triệu
+  // Quy tắc: phần sau "tr" được nhân theo số chữ số:
+  //   1 chữ số  → ×100.000  (1tr6 = 1.600.000)
+  //   2 chữ số  → ×10.000   (1tr65 = 1.650.000)
+  //   3 chữ số  → ×1.000    (1tr699 = 1.699.000)
+  //   4+ chữ số → giá trị tuyệt đối (1tr5000 = 1.005.000)
+  raw = raw.replace(/(\d+(?:\.\d+)?)(tr|triệu|trieu)(\d+)/g, (_, a, _u, b) => {
+    const millions = Number(a) * 1000000;
+    const len = b.length;
+    let extra;
+    if (len === 1)      extra = Number(b) * 100000;
+    else if (len === 2) extra = Number(b) * 10000;
+    else if (len === 3) extra = Number(b) * 1000;
+    else                extra = Number(b);
+    return millions + extra;
+  });
+
+  // đổi đơn vị tr không có phần sau
+  raw = raw.replace(/(\d+(?:\.\d+)?)(tr|triệu|trieu)/g, (_, n) => Number(n) * 1000000);
+
+  // hỗ trợ kiểu "1k548" = 1548, "1k54" = 1540, "1k5" = 1500
+  raw = raw.replace(/(\d+(?:\.\d+)?)k(\d+)/g, (_, a, b) => {
+    const base = Number(a) * 1000;
+    const len = b.length;
+    let extra;
+    if (len === 1)      extra = Number(b) * 100;
+    else if (len === 2) extra = Number(b) * 10;
+    else                extra = Number(b);
+    return base + extra;
+  });
+
+  raw = raw.replace(/(\d+(?:\.\d+)?)k(?!\w)/g, (_, n) => Number(n) * 1000);
 
   // chỉ cho phép ký tự an toàn
   if (!/^[0-9+\-*/().]+$/.test(raw)) return 0;
 
   try {
-    return Math.round(Function(`"use strict"; return (${raw})`)());
+    // làm tròn đến hàng nghìn
+    return Math.round(Function(`"use strict"; return (${raw})`)() / 1000) * 1000;
   } catch {
     return 0;
   }
 }
 
 function fmt(n) {
-  if (n>=1000000) return (n/1000000).toFixed(n%1000000===0?0:1).replace('.0','')+'tr';
-  if (n>=1000) return Math.round(n/1000)+'k';
-  return n+'đ';
+  if (n >= 1000000) {
+    // Hiển thị đủ đến hàng nghìn: 1.567tr, 2.5tr, 3tr
+    const thousands = Math.round(n / 1000); // đơn vị nghìn
+    const v = thousands / 1000;             // quy về triệu
+    // Bỏ số 0 thừa cuối: 1.500 → 1.5, 1.000 → 1
+    const str = v.toFixed(3).replace(/\.?0+$/, '');
+    return str + 'tr';
+  }
+  // Dưới 1 triệu: làm tròn đến nghìn gần nhất
+  const k = Math.round(n / 1000);
+  if (k >= 1) return k + 'k';
+  return n + 'đ';
 }
 
 function todayStr() {
@@ -385,7 +415,7 @@ function addEntry() {
   const amount = parseAmount(document.getElementById('amountInput').value);
   if (!name || !amount) { document.getElementById(name?'amountInput':'nameInput').focus(); return; }
   const cat = CATS.find(c=>c.label===selectedCat)||CATS[5];
-  entries.unshift({ id: Date.now(), name, amount, cat: cat.label, icon: cat.icon, color: cat.color, date: todayStr(), time: new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}) });
+  entries.unshift({ id: Date.now(), name, amount, cat: cat.label, icon: cat.icon, color: cat.color, date: selectedDate, time: new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}) });
   save();
   document.getElementById('nameInput').value = '';
   document.getElementById('amountInput').value = '';
@@ -469,8 +499,7 @@ function exportReport() {
 
   let text = `📊 BÁO CÁO CHI TIÊU — ${monthLabel.toUpperCase()}\n${'─'.repeat(34)}\n\n`;
   text += `💰 Tổng chi tiêu: ${fmt(monthSum)}\n`;
-  if (budget>0) {
-    const rem = budget-monthSum, pct = Math.round(monthSum/budget*100);
+  if (budget>0 && selectedMonth === nowMonthStr()) {
     text += `🎯 Ngân sách: ${fmt(budget)} (đã dùng ${pct}%)\n`;
     text += rem>=0 ? `✅ Còn lại: ${fmt(rem)}\n` : `⚠️ Vượt ngân sách: ${fmt(Math.abs(rem))}\n`;
   }
@@ -480,7 +509,7 @@ function exportReport() {
   });
   text += `\n📅 THEO NGÀY\n${'─'.repeat(20)}\n`;
   Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).forEach(date => {
-    const d = new Date(date);
+    const d = new Date(date+'T00:00:00');
     text += `\n${d.toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric'})} — ${fmt(byDate[date].reduce((s,e)=>s+e.amount,0))}\n`;
     byDate[date].forEach(e => { text += `  ${e.icon} ${e.name}: ${fmt(e.amount)}\n`; });
   });
@@ -510,6 +539,7 @@ function hideClearModal(e) {
 function clearAllData() {
   try { localStorage.removeItem('chitieu_entries'); localStorage.removeItem('chitieu_budget'); } catch(e) {}
   entries = []; budget = 0; filterCat = 'Tất cả';
+  selectedDate = todayStr(); calMonth = nowMonthStr(); selectedMonth = nowMonthStr(); _lastDate = todayStr();
   document.getElementById('clearModal').classList.add('hidden');
   showToast('Đã xoá toàn bộ dữ liệu');
   render();
@@ -526,9 +556,7 @@ function render() {
   const d = new Date();
   const today = todayStr();
   const monthStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-  const todayEntries = entries.filter(e=>e.date===today);
   const monthEntries = entries.filter(e=>e.date.startsWith(monthStr));
-  const todaySum = todayEntries.reduce((s,e)=>s+e.amount,0);
   const monthSum = monthEntries.reduce((s,e)=>s+e.amount,0);
 
   document.getElementById('monthTotal').textContent = fmt(monthSum);
@@ -553,7 +581,15 @@ function render() {
   }
 
   const days=[];
-  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);days.push({ds,sum:entries.filter(e=>e.date===ds).reduce((s,e)=>s+e.amount,0),label:d.toLocaleDateString('vi-VN',{weekday:'narrow'})});}
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    const y=d.getFullYear();
+    const m=String(d.getMonth()+1).padStart(2,'0');
+    const day=String(d.getDate()).padStart(2,'0');
+    const ds=`${y}-${m}-${day}`;
+    days.push({ds,sum:entries.filter(e=>e.date===ds).reduce((s,e)=>s+e.amount,0),label:d.toLocaleDateString('vi-VN',{weekday:'narrow'})});
+  }
   const max=Math.max(...days.map(d=>d.sum),1);
   document.getElementById('chartBars').innerHTML=days.map(d=>
     `<div class="bar-col" onclick="selectDayFromChart('${d.ds}')">
@@ -599,9 +635,9 @@ document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='
 document.getElementById('budgetInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveBudget();});
 renderCats(); renderMonthPicker(); render();
 
-// Auto-refresh at midnight: check every minute if date has changed
+// Auto-refresh: kiểm tra mỗi phút, tự cập nhật khi sang ngày mới
 let _lastDate = todayStr();
-setInterval(function() {
+function checkDayReset() {
   const now = todayStr();
   if (now !== _lastDate) {
     _lastDate = now;
@@ -609,7 +645,11 @@ setInterval(function() {
     calMonth = nowMonthStr();
     render();
   }
-}, 60000);
+}
+setInterval(checkDayReset, 60000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) checkDayReset();
+});
 </script>
 </body>
 </html>
